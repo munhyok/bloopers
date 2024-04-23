@@ -1,0 +1,41 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.grit.bloopers.mapper.PortfolioMapper">
+
+    <!-- 포트폴리오 업로드  -->
+    <insert id="createPortfolio" parameterType="PortfolioDTO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO portfolio (user_id, like_id, portfolio_name, portfolio_url, description, created_at)
+        VALUES (#{user_id}, #{like_id}, #{portfolio_name}, #{portfolio_url}, #{description}, #{created_at})
+    </insert>
+
+    <!-- 포트폴리오 조회 -->
+    <select id="getPortfolio" resultType="PortfolioDTO">
+        SELECT * FROM portfolio WHERE id = #{id}
+    </select>
+
+    <!-- 포트폴리오 수정
+        추후 Table에 수정한 날짜 column 추가 왜 created_at이 Null로 바뀌는가 -->
+
+    <update id="updatePortfolio" parameterType="PortfolioDTO">
+        UPDATE portfolio SET portfolio_name = #{portfolio_name},
+        portfolio_url = #{portfolio_url},
+        description = #{description}
+
+        WHERE id = #{id}
+    </update>
+
+    <!-- 포트폴리오 삭제 -->
+    <delete id="deletePortfolio">
+        DELETE FROM portfolio WHERE id = #{id}
+    </delete>
+
+    <!-- 포트폴리오 전부 가져오기 -->
+    <select id="getPortfolioList" resultType="PortfolioDTO">
+      SELECT * FROM portfolio
+    </select>
+
+
+
+</mapper>
