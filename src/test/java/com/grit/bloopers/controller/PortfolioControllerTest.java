@@ -2,20 +2,29 @@ package com.grit.bloopers.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.grit.bloopers.config.SecurityConfig;
 import com.grit.bloopers.dto.PortfolioDTO;
 import com.grit.bloopers.service.PortfolioService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+
 import static org.mockito.BDDMockito.*;
 
 import java.time.LocalDate;
@@ -27,19 +36,37 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+
 @WebMvcTest(controllers = PortfolioController.class)
-@ActiveProfiles({"test"})
+@ActiveProfiles({"Portfolio Test"})
 public class PortfolioControllerTest {
 
     @MockBean
     PortfolioService portfolioService;
 
     @Autowired
+    private WebApplicationContext context;
+
+    @Autowired
     MockMvc mockMvc;
+
+    @BeforeEach
+    public void setup() {
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(context)
+                .apply(springSecurity())
+                .defaultRequest(get("/**").with(csrf()))
+                .defaultRequest(post("/**").with(csrf()))
+                .defaultRequest(put("/**").with(csrf()))
+                .defaultRequest(delete("/**").with(csrf()))
+                .build();
+    }
 
 
     PortfolioDTO portfolioDTO =
@@ -56,6 +83,7 @@ public class PortfolioControllerTest {
 
 
     @Test
+    @WithMockUser
     @DisplayName("전체 리스트 가져오기")
     void getPortfolioListTest() throws Exception {
 
@@ -68,6 +96,7 @@ public class PortfolioControllerTest {
     }
 
     @Test
+    @WithMockUser
     @DisplayName("GET Portfolio id")
     void getPortfolioByIdTest() throws Exception {
         String portfolioId = "1";
@@ -85,6 +114,7 @@ public class PortfolioControllerTest {
     }
 
     @Test
+    @WithMockUser
     @DisplayName("POST Portfolio")
     void createPortfolioTest() throws Exception {
         PortfolioDTO createPortfolioDTO =
@@ -104,7 +134,7 @@ public class PortfolioControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.post("/portfolios")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
+                        .content(json).with(csrf()))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.portfolio_name").value(createPortfolioDTO.getPortfolio_name()))
                 .andExpect(jsonPath("$.portfolio_url").value(createPortfolioDTO.getPortfolio_url()))

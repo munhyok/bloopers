@@ -27,7 +27,7 @@ public class PortfolioService {
         this.portfolioMapper = portfolioMapper;
     }
 
-    @Transactional
+
     public void createPortfolio(PortfolioDTO portfolioDTO) {
         portfolioMapper.createPortfolio(portfolioDTO);
     }
