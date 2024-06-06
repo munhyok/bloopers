@@ -2,25 +2,24 @@ package com.grit.bloopers.service;
 
 
 import com.grit.bloopers.dto.UserDTO;
+import com.grit.bloopers.exception.common.LoginSuccessException;
+import com.grit.bloopers.exception.error.LoginFailureException;
 import com.grit.bloopers.mapper.UserMapper;
-import org.apache.catalina.User;
+import com.grit.bloopers.utils.SessionUtil;
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
-    @Autowired
-    private UserMapper userMapper;
 
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final UserMapper userMapper;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public UserService(){}
 
-    public UserService(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
 
     public void createUser(UserDTO userDTO){
 
@@ -34,12 +33,26 @@ public class UserService {
 
     }
 
-    public UserDTO getUserByEmail(String email, String rawPassword){
+
+
+    public UserDTO getUserByEmail(String email, String rawPassword, HttpSession session){
         UserDTO userDTO = userMapper.getUserByEmail(email);
 
-        if (bCryptPasswordEncoder.matches(rawPassword, userDTO.getPassword())) {
-            return userDTO;
+        if (userDTO == null || !bCryptPasswordEncoder.matches(rawPassword, userDTO.getPassword())){
+            throw new LoginFailureException();
         }
-        return null;
+
+        SessionUtil.setLoginUsersId(session, userDTO.getId());
+
+
+
+        throw new LoginSuccessException();
     }
+
+
+
 }
+
+
+
+

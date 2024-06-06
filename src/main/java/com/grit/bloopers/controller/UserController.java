@@ -1,26 +1,27 @@
 package com.grit.bloopers.controller;
 
 
+import com.grit.bloopers.controller.handler.CommonController;
 import com.grit.bloopers.dto.LoginDTO;
 import com.grit.bloopers.dto.UserDTO;
 import com.grit.bloopers.service.UserService;
+import com.grit.bloopers.utils.SessionUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import org.apache.catalina.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
+import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserService userService;
 
+    private final UserService userService;
 
     @PostMapping("/register")
     public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
@@ -30,21 +31,21 @@ public class UserController {
 
 
 
-    //DTO를 Request와 Response로 나눠서 처리
 
     @PostMapping("/login")
-    public ResponseEntity<UserDTO> login (@RequestBody LoginDTO loginDTO, HttpServletRequest request) {
+    @ResponseStatus(HttpStatus.OK)
+    public void login (@RequestBody LoginDTO loginDTO, HttpSession session) {
+        UserDTO userDTO = userService.getUserByEmail(loginDTO.getEmail(), loginDTO.getPassword(), session);
 
-
-        UserDTO userDTO = userService.getUserByEmail(loginDTO.getEmail(), loginDTO.getPassword());
-        if (userDTO == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        HttpSession session = request.getSession();
-        session.setAttribute("user", userDTO);
-
-        return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
+
+    @GetMapping("/logout")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<?> logout (HttpSession session) {
+        SessionUtil.logoutUser(session);
+        return new ResponseEntity<>("로그아웃 완료", HttpStatus.OK);
+
+    }
+
 
 }

@@ -3,7 +3,7 @@ package com.grit.bloopers.controller;
 
 import com.grit.bloopers.dto.PortfolioDTO;
 import com.grit.bloopers.service.PortfolioService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,12 +11,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 public class PortfolioController {
 
-    @Autowired
-    private PortfolioService portfolioService;
+    private final PortfolioService portfolioService;
 
-    @PostMapping("/portfolios")
+    @PostMapping("/portfolios-upload")
+    @ResponseStatus(HttpStatus.CREATED)
+
     public ResponseEntity<PortfolioDTO> createPortfolio(@RequestBody PortfolioDTO portfolioDTO) {
         portfolioService.createPortfolio(portfolioDTO);
         return new ResponseEntity<>(portfolioDTO, HttpStatus.CREATED);

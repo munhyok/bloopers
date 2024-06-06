@@ -132,7 +132,7 @@ public class PortfolioControllerTest {
          */
         String json = new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(createPortfolioDTO);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/portfolios")
+        mockMvc.perform(MockMvcRequestBuilders.post("/portfolios-upload")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json).with(csrf()))
                 .andExpect(status().isCreated())

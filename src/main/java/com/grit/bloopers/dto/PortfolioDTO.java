@@ -2,7 +2,6 @@ package com.grit.bloopers.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
@@ -11,8 +10,6 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @Builder
-
-
 public class PortfolioDTO {
 
     private int id;
@@ -24,6 +21,7 @@ public class PortfolioDTO {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime created_at;
+
 
 
 }
