@@ -12,8 +12,6 @@ import jakarta.servlet.http.HttpSession;
 public class SessionUtil {
 
 
-
-
     private static final String LOGIN_USERS_ID = "LOGIN_USERS_ID";
 
     private SessionUtil() {

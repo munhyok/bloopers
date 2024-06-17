@@ -1,0 +1,19 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.grit.bloopers.mapper.FollowMapper">
+
+    <!--팔로우-->
+    <insert id="followUser" parameterType="FollowUserDTO">
+        INSERT INTO follow (user_id, following_id) VALUES (#{user_id}, #{following_id})
+    </insert>
+
+    <delete id="unfollowUser">
+        DELETE FROM follow WHERE user_id = #{user_id}
+    </delete>
+
+
+
+
+</mapper>

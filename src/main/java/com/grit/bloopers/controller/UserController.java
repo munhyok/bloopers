@@ -6,15 +6,11 @@ import com.grit.bloopers.dto.LoginDTO;
 import com.grit.bloopers.dto.UserDTO;
 import com.grit.bloopers.service.UserService;
 import com.grit.bloopers.utils.SessionUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Collections;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -46,6 +42,7 @@ public class UserController {
         return new ResponseEntity<>("로그아웃 완료", HttpStatus.OK);
 
     }
+
 
 
 }
