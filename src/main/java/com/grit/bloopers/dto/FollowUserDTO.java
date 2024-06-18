@@ -12,6 +12,6 @@ import lombok.ToString;
 @ToString
 @Builder
 public class FollowUserDTO {
-    private int userId;
-    private int followerId;
+    private int user_id;
+    private int following_id;
 }

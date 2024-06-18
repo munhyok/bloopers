@@ -9,8 +9,8 @@
         INSERT INTO follow (user_id, following_id) VALUES (#{user_id}, #{following_id})
     </insert>
 
-    <delete id="unfollowUser">
-        DELETE FROM follow WHERE user_id = #{user_id}
+    <delete id="unfollowUser" parameterType="FollowUserDTO">
+        DELETE FROM follow WHERE user_id = #{user_id} AND following_id = #{following_id}
     </delete>
 
 

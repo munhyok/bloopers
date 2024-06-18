@@ -20,6 +20,20 @@ public class FollowService {
             throw new LoginRequiredException();
         }
 
+        followUserDTO.setUser_id(sessionId);
+
         followMapper.followUser(followUserDTO);
+    }
+
+    public void unfollowUser(FollowUserDTO followUserDTO) {
+        int sessionId = SessionUtil.getLoginUserId();
+        if (sessionId == -1) {
+            throw new LoginRequiredException();
+        }
+
+        followUserDTO.setUser_id(sessionId);
+        followMapper.unfollowUser(followUserDTO);
+
+
     }
 }
