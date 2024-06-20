@@ -1,10 +1,14 @@
 package com.grit.bloopers.service;
 
 import com.grit.bloopers.dto.PortfolioDTO;
+import com.grit.bloopers.dto.PortfolioMsgDTO;
 import com.grit.bloopers.exception.error.LoginRequiredException;
 import com.grit.bloopers.mapper.PortfolioMapper;
 import com.grit.bloopers.utils.SessionUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +22,12 @@ import java.util.List;
 
     Spring Boot Security가 아닌 HttpServlet으로 로그인 기능 구현
 
+
+    kafka listener 구분하기
+    피드 관련 코드 추가하기
+    비동기 처리가 왜 필요한지 장단점
+    성능테스트
+    CI/CD
  */
 
 @Service
@@ -28,25 +38,38 @@ public class PortfolioService {
     private final PortfolioMapper portfolioMapper;
 
 
-    public void createPortfolio(PortfolioDTO portfolioDTO) {
+    private final RedisTemplate<String, Object> redisTemplate;
+
+    @KafkaListener(topics = "portfolio-topic", groupId = "portfolio-group")
+    public void createPortfolio(PortfolioMsgDTO message) {
 
         //로그인 유무 확인
-        int sessionId = SessionUtil.getLoginUserId();
+        //int sessionId = SessionUtil.getLoginUserId();
 
+        /*
         //로그인 하지 않았으면 Exception
         if (sessionId == -1) {
             throw new LoginRequiredException();
         }
 
+        */
+
+        String portfolioData = message.getPortfolioDTO().toString();
+
+        for (int follower : message.getFollowers()) {
+            String key = "feed:"+ Integer.toString(follower);
+            redisTemplate.opsForSet().add(key, portfolioData);
+        }
+
 
         //어떤 유저가 업로드했는지 id 정보를 가져오기
-        portfolioDTO.setUser_id(sessionId);
+        //message.setUser_id(sessionId);
 
         //portfolio id와 like id를 일치
-        portfolioDTO.setLike_id(portfolioDTO.getId());
+        //portfolioDTO.setLike_id(portfolioDTO.getId());
 
 
-        portfolioMapper.createPortfolio(portfolioDTO);
+        //portfolioMapper.createPortfolio(portfolioDTO);
 
     }
 

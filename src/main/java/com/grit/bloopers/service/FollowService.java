@@ -7,6 +7,8 @@ import com.grit.bloopers.utils.SessionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class FollowService {
@@ -35,5 +37,13 @@ public class FollowService {
         followMapper.unfollowUser(followUserDTO);
 
 
+    }
+
+    public List<Integer> getFollowList() {
+        int sessionId = SessionUtil.getLoginUserId();
+        if (sessionId == -1) {
+            throw new  LoginRequiredException();
+        }
+        return followMapper.getFollowList(sessionId);
     }
 }

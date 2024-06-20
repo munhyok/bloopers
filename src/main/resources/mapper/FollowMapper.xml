@@ -14,6 +14,11 @@
     </delete>
 
 
+    <!--팔로우 리스트 -->
+    <select id="getFollowList">
+        SELECT following_id FROM follow WHERE user_id = #{user_id}
+    </select>
+
 
 
 </mapper>

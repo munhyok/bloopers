@@ -2,6 +2,7 @@ package com.grit.bloopers.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+import lombok.extern.jackson.Jacksonized;
 
 import java.time.LocalDateTime;
 
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @Builder
+@Jacksonized
 public class PortfolioDTO {
 
     private int id;
